@@ -594,7 +594,7 @@ Jul 23 18:26:29 DESKTOP-8NM259D sudo[189957]: pam_unix(sudo:session): session op
 ```
 ## Collaboration Guide
 
-We welcome contributions from the community to improve **Alpha-Bot**! Here's how you can get involved:
+I welcome contributions from the community to improve **Devopsfetch Tool**! Here's how you can get involved:
 - Reporting Issues
 - Suggesting Features
 

@@ -10,6 +10,7 @@ devopsfetch/
 ├── devopsfetch.py
 ├── install.sh
 ├── devopsfetch.service
+├──run_devopsfetch.sh
 ├── README.md
 └── logs/
     └── devopsfetch.log

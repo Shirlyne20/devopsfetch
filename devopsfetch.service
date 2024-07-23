@@ -1,0 +1,23 @@
+[Unit]
+Description=DevOps Fetch Service
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/python3 /home/shirlcookie/devopsfetch/devopsfetch.py
+WorkingDirectory=/home/shirlcookie/devopsfetch
+StandardOutput=append:/var/log/devopsfetch.log
+StandardError=append:/var/log/devopsfetch_error.log
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
+[Unit]
+Description=DevOpsFetch Continuous Monitoring Service
+
+[Service]
+ExecStart=/usr/bin/python3 /home/shirlcookie/devopsfetch/devopsfetch.py --monitor
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

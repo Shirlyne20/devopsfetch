@@ -185,22 +185,39 @@ def list_docker():
         print("No Docker containers found.")
 
 def list_nginx():
-    """Display all Nginx domains and their ports."""
+    """Display all Nginx domains, proxies, and their configuration files."""
     output = subprocess.run(['nginx', '-T'], capture_output=True, text=True)
     config_data = output.stdout
-    domains = parse_nginx_config(config_data)
-    table = PrettyTable(['Domain'])
-    for domain in domains:
-        table.add_row([domain])
-    print(table)
+    nginx_info_table = parse_nginx_config(config_data)
+    
+    if nginx_info_table:
+        print("Nginx Configuration:")
+        print(nginx_info_table)
+    else:
+        print("No Nginx configuration found.")
 
 def parse_nginx_config(config_data):
-    domains = []
-    for line in config_data.splitlines():
+    """Parse Nginx configuration data and return a PrettyTable with server name, proxy, and configuration file."""
+    table = PrettyTable(['Server Name', 'Proxy', 'Configuration File'])
+    config_lines = config_data.splitlines()
+    
+    server_name = None
+    proxy = None
+    configuration_file = None
+    
+    for line in config_lines:
         if 'server_name' in line:
-            domain = line.split()[1].strip(';')
-            domains.append(domain)
-    return domains
+            server_name = line.split()[1].strip(';')
+        elif 'proxy_pass' in line:
+            proxy = line.split()[1].strip(';')
+        elif 'include' in line:
+            configuration_file = line.split()[1].strip(';')
+            table.add_row([server_name, proxy, configuration_file])
+            server_name = None
+            proxy = None
+            configuration_file = None
+    
+    return table
 
 def nginx_info(domain):
     """Display detailed configuration information for a specific domain."""
@@ -339,6 +356,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 ```
 
 **Step 3:Make the script executable:**
@@ -548,15 +566,16 @@ devopsfetch -n
 ```
 -Expected Output:
 ```bash
-+-------------------------------+
-|             Domain            |
-+-------------------------------+
-| server_names_hash_bucket_size |
-|    server_name_in_redirect    |
-|               _               |
-|          server_name          |
-|           localhost           |
-+-------------------------------+
++-------------------------+-------+-----------------------------------+
+|       Server Name       | Proxy |         Configuration File        |
++-------------------------+-------+-----------------------------------+
+|           None          |  None | /etc/nginx/modules-enabled/*.conf |
+| server_name_in_redirect |  None |       /etc/nginx/mime.types       |
+|           None          |  None |      /etc/nginx/conf.d/*.conf     |
+|           None          |  None |     /etc/nginx/sites-enabled/*    |
+|           None          |  None |              include              |
+|            _            |  None |              include              |
++-------------------------+-------+-----------------------------------+
 ```
 -Provide detailed configuration information for a specific domain:
 ```bash
